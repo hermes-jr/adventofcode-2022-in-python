@@ -2,9 +2,11 @@
 
 import utils
 
+ListOfLists = list[list[int]]
 
-def parse_data(lines):
-    data = {}
+
+def parse_data(lines) -> ListOfLists:
+    data: ListOfLists = []
 
     elf = 0
     for line in lines:
@@ -14,7 +16,9 @@ def parse_data(lines):
             elf += 1
             continue
 
-        nl = data.get(elf, [])
+        if elf >= len(data):
+            data.append([])
+        nl = data[elf]
         nl.append(int(line))
         data[elf] = nl
 
@@ -24,15 +28,15 @@ def parse_data(lines):
     return data
 
 
-def level_p1(data):
-    summed = {k: sum(v) for k, v in data.items()}
-    result1 = max(summed.values())
-    return result1, summed
+def level_p1(data) -> tuple[int, list[int]]:
+    data = list(map(sum, data))
+    if __debug__:
+        print("Summed chunks: ", data)
+    return max(data), data
 
 
-def level_p2(data):
-    result2 = sum(sorted(data.values(), reverse=True)[:3])
-    return result2
+def level_p2(data: list[int]) -> int:
+    return sum(sorted(data, reverse=True)[:3])
 
 
 if __name__ == "__main__":
