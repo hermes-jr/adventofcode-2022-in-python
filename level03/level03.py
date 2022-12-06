@@ -3,7 +3,7 @@ import copy
 from utils import utils
 
 
-def level_p1(in_data: list[str]) -> int:
+def p1(in_data: list[str]) -> int:
     result = 0
     for rucksack in in_data:
         half = int(len(rucksack) / 2)
@@ -19,7 +19,7 @@ def level_p1(in_data: list[str]) -> int:
     return result
 
 
-def level_p2(in_data: list[str]) -> int:
+def p2(in_data: list[str]) -> int:
     result = 0
     for i in range(0, len(in_data) - 2, 3):
         common = set(in_data[i])
@@ -39,9 +39,9 @@ def to_points(character: str) -> int:
 
 if __name__ == "__main__":
     d = utils.read_file("in.txt")
-    result1 = level_p1(d)
+    result1 = p1(d)
     print("result1: {}".format(result1))
-    result2 = level_p2(d)
+    result2 = p2(d)
     print("result2: {}".format(result2))
 
 u"""

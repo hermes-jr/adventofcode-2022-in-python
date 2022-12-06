@@ -13,10 +13,10 @@ stacks = [
 
 
 def test_part1():
-    result = level05.level_p1(stacks, in_data)
+    result = level05.p1(stacks, in_data)
     assert result == "CMZ", "Part 1 works"
 
 
 def test_part2():
-    result = level05.level_p2(stacks, in_data)
+    result = level05.p2(stacks, in_data)
     assert result == "MCD", "Part 2 works"

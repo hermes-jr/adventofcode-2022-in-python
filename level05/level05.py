@@ -30,41 +30,41 @@ def parse_data(lines) -> list[tuple[int, int, int]]:
     return actions
 
 
-def level_p1(stacks, in_data: list[tuple[int, int, int]]) -> str:
-    lstack = copy.deepcopy(stacks)
+def p1(stacks, in_data: list[tuple[int, int, int]]) -> str:
+    l_stacks = copy.deepcopy(stacks)
     for amount, s_from, s_to in in_data:
         if __debug__:
             print(amount, s_from, s_to)
         for _ in range(0, amount):
-            v = lstack[s_from].pop()
+            v = l_stacks[s_from].pop()
             if __debug__:
-                print("Moving {} from {} to {}".format(v, lstack[s_from], lstack[s_to]))
-            lstack[s_to].append(v)
+                print("Moving {} from {} to {}".format(v, l_stacks[s_from], l_stacks[s_to]))
+            l_stacks[s_to].append(v)
         if __debug__:
-            print("Stacks state:", lstack)
+            print("Stacks state:", l_stacks)
 
-    return ''.join([v[-1] for v in lstack])
+    return ''.join([v[-1] for v in l_stacks])
 
 
-def level_p2(stacks, in_data: list[tuple[int, int, int]]) -> str:
-    lstack = copy.deepcopy(stacks)
+def p2(stacks, in_data: list[tuple[int, int, int]]) -> str:
+    l_stacks = copy.deepcopy(stacks)
     for amount, s_from, s_to in in_data:
         batch = []
         for _ in range(0, amount):
-            batch.append(lstack[s_from].pop())
+            batch.append(l_stacks[s_from].pop())
         batch = list(reversed(batch))
-        lstack[s_to].extend(batch)
+        l_stacks[s_to].extend(batch)
         if __debug__:
-            print("Stacks state:", lstack)
+            print("Stacks state:", l_stacks)
 
-    return ''.join([v[-1] for v in lstack])
+    return ''.join([v[-1] for v in l_stacks])
 
 
 if __name__ == "__main__":
     d = parse_data(utils.read_file("in.txt"))
-    result1 = level_p1(stacks, d)
+    result1 = p1(stacks, d)
     print("result1: {}".format(result1))
-    result2 = level_p2(stacks, d)
+    result2 = p2(stacks, d)
     print("result2: {}".format(result2))
 
 u"""

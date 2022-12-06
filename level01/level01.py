@@ -28,22 +28,22 @@ def parse_data(lines) -> ListOfLists:
     return data
 
 
-def level_p1(data) -> tuple[int, list[int]]:
+def p1(data) -> tuple[int, list[int]]:
     data = list(map(sum, data))
     if __debug__:
         print("Summed chunks: ", data)
     return max(data), data
 
 
-def level_p2(data: list[int]) -> int:
+def p2(data: list[int]) -> int:
     return sum(sorted(data, reverse=True)[:3])
 
 
 if __name__ == "__main__":
     d = parse_data(utils.read_file("in.txt"))
 
-    result1, summed = level_p1(d)
-    result2 = level_p2(summed)
+    result1, summed = p1(d)
+    result2 = p2(summed)
     print("result1: {}".format(result1))
     print("result2: {}".format(result2))
 

@@ -16,10 +16,10 @@ def test_to_points():
 
 
 def test_part1():
-    result = level03.level_p1(in_data)
+    result = level03.p1(in_data)
     assert result == 157
 
 
 def test_part2():
-    result = level03.level_p2(in_data)
+    result = level03.p2(in_data)
     assert result == 70
