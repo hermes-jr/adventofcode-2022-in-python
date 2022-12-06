@@ -1,4 +1,4 @@
-def read_file(filepath):
+def read_file(filepath) -> list[str]:
     data = []
     with open(filepath, 'r') as f:
         for line in f:
