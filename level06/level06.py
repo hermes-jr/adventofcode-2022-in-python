@@ -1,7 +1,4 @@
-import copy
-
 from utils import utils
-import re
 
 
 def detect_first_block(input: str, block_len: int) -> int:

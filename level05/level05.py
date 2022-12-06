@@ -1,7 +1,7 @@
 import copy
+import re
 
 from utils import utils
-import re
 
 linematch = re.compile("^move ([0-9]+) from ([0-9]+) to ([0-9]+)$")
 

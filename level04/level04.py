@@ -1,7 +1,6 @@
-import copy
+import re
 
 from utils import utils
-import re
 
 line_regex = re.compile("^([0-9]+)-([0-9]+),([0-9]+)-([0-9]+)$")
 Range = tuple[int, int]

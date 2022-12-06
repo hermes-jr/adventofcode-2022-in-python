@@ -1,6 +1,7 @@
+import os
+
 import level05
 import utils
-import os
 
 td1 = os.path.join(os.path.dirname(__file__), 'in.txt')
 in_data = level05.parse_data(utils.read_file(td1))
