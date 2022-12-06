@@ -1,15 +1,54 @@
 from utils import utils
 
+# 1 rock A X
+# 2 paper B Y
+# 3 scissors C Z
+# 0 loss, 3 draw, 6 victory
+combinations = {
+    ('A', 'X'): (3, 1),
+    ('B', 'Y'): (3, 2),
+    ('C', 'Z'): (3, 3),
+    ('A', 'Y'): (6, 2),
+    ('A', 'Z'): (0, 3),
+    ('B', 'X'): (0, 1),
+    ('B', 'Z'): (6, 3),
+    ('C', 'X'): (6, 1),
+    ('C', 'Y'): (0, 2)
+}
+
+# X lose, Y draw, Z win
+replacements = {
+    ('A', 'X'): 'Z',
+    ('A', 'Y'): 'X',
+    ('A', 'Z'): 'Y',
+
+    ('B', 'X'): 'X',
+    ('B', 'Y'): 'Y',
+    ('B', 'Z'): 'Z',
+
+    ('C', 'X'): 'Y',
+    ('C', 'Y'): 'Z',
+    ('C', 'Z'): 'X',
+}
+
 
 def p1(in_data: list[str]) -> int:
+    result = 0
     for line in in_data:
         a, b = line.split(' ')
-        print(a, " => ", b)
-    return -1
+        scores = combinations[(a, b)]
+        result += scores[0] + scores[1]
+    return result
 
 
 def p2(in_data: list[str]) -> int:
-    return -1
+    result = 0
+    for line in in_data:
+        a, b = line.split(' ')
+        b = replacements[(a, b)]
+        scores = combinations[(a, b)]
+        result += scores[0] + scores[1]
+    return result
 
 
 def to_points(character: str) -> int:
@@ -54,5 +93,19 @@ This strategy guide predicts and recommends the following:
 In this example, if you were to follow the strategy guide, you would get a total score of 15 (8 + 1 + 6).
 
 What would your total score be if everything goes exactly according to your strategy guide?
+
+--- Part Two ---
+
+The Elf finishes helping with the tent and sneaks back over to you. "Anyway, the second column says how the round needs to end: X means you need to lose, Y means you need to end the round in a draw, and Z means you need to win. Good luck!"
+
+The total score is still calculated in the same way, but now you need to figure out what shape to choose so the round ends as indicated. The example above now goes like this:
+
+    In the first round, your opponent will choose Rock (A), and you need the round to end in a draw (Y), so you also choose Rock. This gives you a score of 1 + 3 = 4.
+    In the second round, your opponent will choose Paper (B), and you choose Rock so you lose (X) with a score of 1 + 0 = 1.
+    In the third round, you will defeat your opponent's Scissors with Rock for a score of 1 + 6 = 7.
+
+Now that you're correctly decrypting the ultra top secret strategy guide, you would get a total score of 12.
+
+Following the Elf's instructions for the second column, what would your total score be if everything goes exactly according to your strategy guide?
 
 """

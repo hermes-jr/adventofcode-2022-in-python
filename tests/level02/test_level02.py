@@ -9,3 +9,7 @@ in_data = utils.read_file(td1)
 
 def test_part1():
     assert level02.p1(in_data) == 15
+
+
+def test_part2():
+    assert level02.p2(in_data) == 12
