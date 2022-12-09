@@ -6,37 +6,35 @@ Matrix = list[list[int]]
 def p1(level_map: Matrix) -> int:
     side = len(level_map)
     visibility = [x[:] for x in [[False] * side] * side]
+
+    def check_cell(max_seen: int, i: int, j: int) -> int:
+        if level_map[j][i] > max_seen:
+            visibility[j][i] = True
+        return max(level_map[j][i], max_seen)
+
+    def scan_h(range_params: tuple[int, int, int]):
+        for dx in range(0, side):
+            max_seen = -1
+            for dy in range(*range_params):
+                max_seen = check_cell(max_seen, dx, dy)
+
+    def scan_v(range_params: tuple[int, int, int]):
+        for dy in range(0, side):
+            max_seen = -1
+            for dx in range(*range_params):
+                max_seen = check_cell(max_seen, dx, dy)
+
     # top to bottom ltr sideview
-    for i in range(0, side):
-        max_seen = -1
-        for j in range(0, side):
-            if level_map[j][i] > max_seen:
-                visibility[j][i] = True
-            max_seen = max(level_map[j][i], max_seen)
+    scan_h((0, side, 1))
 
     # top to bottom rtl sideview
-    for i in range(0, side):
-        max_seen = -1
-        for j in range(side - 1, 0, -1):
-            if level_map[j][i] > max_seen:
-                visibility[j][i] = True
-            max_seen = max(level_map[j][i], max_seen)
+    scan_h((side - 1, 0, -1))
 
     # ltr top view
-    for j in range(0, side):
-        max_seen = -1
-        for i in range(0, side):
-            if level_map[j][i] > max_seen:
-                visibility[j][i] = True
-            max_seen = max(level_map[j][i], max_seen)
+    scan_v((0, side, 1))
 
     # ltr bottom view
-    for j in range(0, side):
-        max_seen = -1
-        for i in range(side - 1, 0, -1):
-            if level_map[j][i] > max_seen:
-                visibility[j][i] = True
-            max_seen = max(level_map[j][i], max_seen)
+    scan_v((side - 1, 0, -1))
 
     result = 0
     for i in range(0, side):
