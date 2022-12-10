@@ -1,4 +1,11 @@
+import logging
+import sys
+
 from utils import utils
+
+for handler in logging.root.handlers[:]:
+    logging.root.removeHandler(handler)
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
 
 def p1(input_lines: list[str]) -> tuple[int, list[bool]]:
@@ -10,28 +17,24 @@ def p1(input_lines: list[str]) -> tuple[int, list[bool]]:
 
     for line in input_lines:
         pixel_pos = cycle - 1
-        if __debug__:
-            print('Start cycle {:3}: begin executing {}'.format(cycle, line))
+        logging.debug('Start cycle %3d: begin executing %s', cycle, line)
         result = cycle_ops(checkpoints, cycle, pixel_pos, pixels, result, x_reg)
 
         cycle += 1
         pixel_pos = cycle - 1
 
         if line == 'noop':
-            if __debug__:
-                print('End of cycle {} Finish executing {}'.format(cycle - 1, line))
+            logging.debug('End of cycle %3d Finish executing %s', cycle - 1, line)
             continue
 
         # Damn, I'm too lazy today to figure out how to handle cycles properly, I'll just do that:
         operand = int(line.split(' ')[1])
-        if __debug__:
-            print('Start cycle {:4}: finish executing {}'.format(cycle, line))
+        logging.debug('Start cycle %3d: finish executing %s', cycle, line)
         result = cycle_ops(checkpoints, cycle, pixel_pos, pixels, result, x_reg)
 
         x_reg += operand
         cycle += 1
-        if __debug__:
-            print('End of cycle {} Finish executing {} (Register X is now {})'.format(cycle - 1, line, x_reg))
+        logging.debug('End of cycle %3d Finish executing %s (Register X is now %d)', cycle - 1, line, x_reg)
 
     return result, pixels
 
@@ -39,14 +42,12 @@ def p1(input_lines: list[str]) -> tuple[int, list[bool]]:
 def cycle_ops(checkpoints, cycle, pixel_pos, pixels, result, x_reg):
     if x_reg - 1 <= (cycle - 1) % 40 <= x_reg + 1:
         pixels[pixel_pos] = True
-    if __debug__:
-        print('During cycle {:3} CRT draws pixel in position {}'.format(cycle, pixel_pos))
-        print('Current CRT row:',
-              ''.join(['#' if x else '.' for x in pixels[int(pixel_pos / 40):int(pixel_pos / 40 + 40)]]))
+    logging.debug('During cycle %3d CRT draws pixel in position %d', cycle, pixel_pos)
+    offset = int(pixel_pos / 40) * 40
+    logging.debug('Current CRT row:' + ''.join(['#' if x else '.' for x in pixels[offset:offset + 40]]))
     if cycle in checkpoints:
-        if __debug__:
-            print("Snapshot! c: {} x: {}".format(cycle, x_reg))
         result += cycle * x_reg
+        logging.debug('Snapshot! c: %3d Register X is now: %d, current result: %d', cycle, x_reg, result)
     return result
 
 
@@ -65,7 +66,7 @@ def p2(input_lines: list[str]) -> str:
 if __name__ == "__main__":
     data_input = utils.read_file("in.txt")
     result1, pixels = p1(data_input)
-    print("result1: {}".format(result1))
+    print("result1:", result1)
     result2 = p2(data_input)
     print("result2:\n{}".format(result2))
 
