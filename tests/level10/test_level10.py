@@ -13,10 +13,11 @@ def test_part1():
 
 
 def test_part2():
+    _, display = level10.p1(in_data)
     template = '##  ##  ##  ##  ##  ##  ##  ##  ##  ##  \n' \
                '###   ###   ###   ###   ###   ###   ### \n' \
                '####    ####    ####    ####    ####    \n' \
                '#####     #####     #####     #####     \n' \
                '######      ######      ######      ####\n' \
                '#######       #######       #######     \n'
-    assert level10.p2(in_data) == template
+    assert level10.p2(display) == template

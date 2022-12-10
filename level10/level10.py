@@ -51,9 +51,7 @@ def cycle_ops(checkpoints, cycle, pixel_pos, pixels, result, x_reg):
     return result
 
 
-def p2(input_lines: list[str]) -> str:
-    _, display = p1(input_lines)
-
+def p2(display: list[bool]) -> str:
     result = ''
     for idx, p in enumerate(display):
         result += '#' if p else ' '
@@ -67,7 +65,7 @@ if __name__ == "__main__":
     data_input = utils.read_file("in.txt")
     result1, pixels = p1(data_input)
     print("result1:", result1)
-    result2 = p2(data_input)
+    result2 = p2(pixels)
     print("result2:\n{}".format(result2))
 
 u"""
