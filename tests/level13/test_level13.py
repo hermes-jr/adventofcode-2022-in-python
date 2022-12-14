@@ -12,5 +12,6 @@ def test_part1():
     assert level13.p1(pkts) == 13
 
 
-#def test_part2():
-#    assert level13.p2(in_data) == 0
+def test_part2():
+    pkts = level13.parse_input(in_data)
+    assert level13.p2(pkts) == 140
