@@ -1,13 +1,12 @@
 import copy
 
 import networkx as nx
-from networkx import NetworkXNoPath
 
 from level09 import Point2D
 from utils import read_file
 
 
-def p1(input_lines: list[str]) -> int:
+def p1(input_lines: list[str]) -> tuple[int, nx.DiGraph]:
     lines = copy.deepcopy(input_lines)
     h = len(lines)
     w = len(lines[0])
@@ -46,16 +45,16 @@ def p1(input_lines: list[str]) -> int:
     #     print(''.join(i))
     # print('===========')
 
-    return nx.dijkstra_path_length(graph, start, end)
+    return nx.dijkstra_path_length(graph, start, end), graph
 
 
-def p2(input_lines: list[str]) -> int:
+def p2(input_lines: list[str], graph: nx.DiGraph) -> int:
     lines = copy.deepcopy(input_lines)
+
     h = len(lines)
     w = len(lines[0])
 
-    graph = nx.DiGraph()
-    start, end = None, None
+    end = None, None
 
     for y in range(h):
         for x in range(w):
@@ -65,44 +64,20 @@ def p2(input_lines: list[str]) -> int:
                 lines[y] = lines[y].replace('E', 'z')
                 end = Point2D(x, y)
 
-    for y in range(0, h):
-        for x in range(0, w):
-            current = lines[y][x]
-            if x + 1 < w:
-                if ord(lines[y][x + 1]) - ord(current) <= 1:
-                    graph.add_edge(Point2D(x + 1, y), Point2D(x, y), weight=1)
-                if ord(current) - ord(lines[y][x + 1]) <= 1:
-                    graph.add_edge(Point2D(x, y), Point2D(x + 1, y), weight=1)
-            if y + 1 < h:
-                if ord(lines[y + 1][x]) - ord(current) <= 1:
-                    graph.add_edge(Point2D(x, y + 1), Point2D(x, y), weight=1)
-                if ord(current) - ord(lines[y + 1][x]) <= 1:
-                    graph.add_edge(Point2D(x, y), Point2D(x, y + 1), weight=1)
-
-    # reverse_paths = dict(nx.all_pairs_dijkstra_path_length(graph, cutoff=400))
-    #
-    # result = max(reverse_paths[end].values())
-    # for destination, distance in reverse_paths[end].items():
-    #     if lines[destination.y][destination.x] == 'a':
-    #         result = min(result, distance)
-
-    # Damn, I know there is a way to get all distances from a single point to all others in a single pass, yet this...
-    result = 99999
-    for y in range(h):
-        for x in range(w):
-            if lines[y][x] == 'a':
-                try:
-                    result = min(result, nx.dijkstra_path_length(graph, end, Point2D(x, y)))
-                except NetworkXNoPath:
-                    continue
+    graph = nx.reverse(graph)
+    ssd = dict(nx.single_source_dijkstra_path_length(graph, end))
+    result = max(ssd.values())
+    for destination, distance in ssd.items():
+        if lines[destination.y][destination.x] == 'a':
+            result = min(result, distance)
     return result
 
 
 if __name__ == "__main__":
     data_input = read_file("in.txt")
-    result1 = p1(data_input)
+    result1, parsed_graph = p1(data_input)
     print("result1: {}".format(result1))
-    result2 = p2(data_input)
+    result2 = p2(data_input, parsed_graph)
     print("result2: {}".format(result2))
 
 u"""
