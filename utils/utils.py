@@ -17,16 +17,18 @@ def read_file(filepath) -> list[str]:
             data.append(line.strip())
     return data
 
-class Point2D(object):
-    def __init__(self, x: int, y: int):
+
+class Point3D(object):
+    def __init__(self, x: int, y: int, z: int):
         self.x = x
         self.y = y
+        self.z = z
 
     def __repr__(self):
-        return "(Point2D[{0}:{1}])".format(self.x, self.y)
+        return "(Point3D[{0}:{1}:{2}])".format(self.x, self.y, self.z)
 
     def __str__(self):
-        return "[{0}:{1}]".format(self.x, self.y)
+        return "[{0}:{1}:{2}]".format(self.x, self.y, self.z)
 
     def __hash__(self):
         """Overrides the default implementation"""
@@ -34,6 +36,17 @@ class Point2D(object):
 
     def __eq__(self, other):
         """Overrides the default implementation"""
-        if isinstance(other, Point2D):
-            return self.x == other.x and self.y == other.y
+        if isinstance(other, Point3D):
+            return self.x == other.x and self.y == other.y and self.z == other.z
         return False
+
+
+class Point2D(Point3D):
+    def __init__(self, x: int, y):
+        super().__init__(x, y, 0)
+
+    def __repr__(self):
+        return "(Point2D[{0}:{1}])".format(self.x, self.y)
+
+    def __str__(self):
+        return "[{0}:{1}]".format(self.x, self.y)
