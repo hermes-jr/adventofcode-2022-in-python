@@ -2,7 +2,7 @@ import copy
 
 import networkx as nx
 
-from level09 import Point2D
+from utils import Point2D
 from utils import read_file
 
 
@@ -54,7 +54,7 @@ def p2(input_lines: list[str], graph: nx.DiGraph) -> int:
     h = len(lines)
     w = len(lines[0])
 
-    end = None, None
+    end = None
 
     for y in range(h):
         for x in range(w):

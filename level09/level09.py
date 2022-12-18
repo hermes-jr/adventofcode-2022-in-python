@@ -1,7 +1,7 @@
 import math
 from math import sqrt
 
-from utils import utils
+from utils import utils, Point2D
 
 directions: dict[str, tuple[int, int]] = {
     'U': (0, -1),
@@ -11,28 +11,6 @@ directions: dict[str, tuple[int, int]] = {
 }
 
 sqrt_2 = sqrt(2)
-
-
-class Point2D(object):
-    def __init__(self, x: int, y: int):
-        self.x = x
-        self.y = y
-
-    def __repr__(self):
-        return "(Point2D[{0}:{1}])".format(self.x, self.y)
-
-    def __str__(self):
-        return "[{0}:{1}]".format(self.x, self.y)
-
-    def __hash__(self):
-        """Overrides the default implementation"""
-        return hash(tuple(sorted(self.__dict__.items())))
-
-    def __eq__(self, other):
-        """Overrides the default implementation"""
-        if isinstance(other, Point2D):
-            return self.x == other.x and self.y == other.y
-        return False
 
 
 def calc_distance(a: Point2D, b: Point2D) -> int:
