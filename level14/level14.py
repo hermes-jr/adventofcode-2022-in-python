@@ -3,31 +3,10 @@ from utils import read_file, Point2D
 
 def p1(occupied: set[Point2D]) -> int:
     deepest_point = max([p.y for p in occupied])
-    units = 0
-    while True:
-        x, y = 500, 0
-        while True:
-            if y > deepest_point:
-                return units
-            if Point2D(x, y + 1) not in occupied:
-                y += 1
-                continue
-                # moves down
-            elif Point2D(x - 1, y + 1) not in occupied:
-                # moves left diagonally
-                x -= 1
-                y += 1
-                continue
-            elif Point2D(x + 1, y + 1) not in occupied:
-                # moves right diagonally
-                x += 1
-                y += 1
-                continue
-            else:
-                # comes to rest
-                occupied.add(Point2D(x, y))
-                units += 1
-                break
+    return fall(
+        occupied,
+        lambda y: y > deepest_point
+    )
 
 
 # Bruteforce =_=
@@ -38,12 +17,20 @@ def p2(occupied: set[Point2D]) -> int:
     for dx in range(500 - triangle_side // 2, 500 + triangle_side // 2):
         occupied.add(Point2D(dx, floor))
 
+    res = fall(
+        occupied,
+        lambda y: Point2D(499, 1) in occupied and Point2D(500, 1) in occupied and Point2D(501, 1) in occupied
+    )
+    return res + 1
+
+
+def fall(occupied: set[Point2D], stop_condition) -> int:
     units = 0
     while True:
         x, y = 500, 0
         while True:
-            if Point2D(499, 1) in occupied and Point2D(500, 1) in occupied and Point2D(501, 1) in occupied:
-                return units + 1
+            if stop_condition(y):
+                return units
             if Point2D(x, y + 1) not in occupied:
                 y += 1
                 continue
