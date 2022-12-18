@@ -23,18 +23,12 @@ def p2(graph: nx.Graph) -> int:
     d1 = Point3D(o.x, o.y, o.z)
     d2 = Point3D(o.x, o.y, o.z)
     for n in lava:
-        d1.x = min(n.x, d1.x)
-        d1.y = min(n.y, d1.y)
-        d1.z = min(n.z, d1.z)
-        d2.x = max(n.x, d2.x)
-        d2.y = max(n.y, d2.y)
-        d2.z = max(n.z, d2.z)
-    d1.x -= 1
-    d1.y -= 1
-    d1.z -= 1
-    d2.x += 2
-    d2.y += 2
-    d2.z += 2
+        d1.x = min(n.x - 1, d1.x)
+        d1.y = min(n.y - 1, d1.y)
+        d1.z = min(n.z - 1, d1.z)
+        d2.x = max(n.x + 2, d2.x)
+        d2.y = max(n.y + 2, d2.y)
+        d2.z = max(n.z + 2, d2.z)
 
     for i in range(d1.z, d2.z):
         for j in range(d1.y, d2.y):
