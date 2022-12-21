@@ -4,6 +4,7 @@ import level21
 import utils
 
 td1 = os.path.join(os.path.dirname(__file__), 'in.txt')
+# td1 = os.path.join(os.path.dirname(__file__), '../../level21/in.txt')
 in_data = utils.read_file(td1)
 
 

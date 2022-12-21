@@ -1,6 +1,13 @@
-import networkx as nx
+import decimal
+from typing import List
 
 from utils import read_file
+
+context = decimal.getcontext()
+import networkx as nx
+
+root = 'root'
+humn = 'humn'
 
 funcs = {
     '+': lambda a, b: a + b,
@@ -9,28 +16,146 @@ funcs = {
     '*': lambda a, b: a * b,
 }
 
+inverse_funcs = {
+    '+': '-',
+    '-': '+',
+    '/': '*',
+    '*': '/'
+}
+
 
 def p1(graph: nx.DiGraph) -> int:
-    wt = reversed([node for node in nx.bfs_tree(graph, 'root') if graph.out_degree(node) > 0])
+    bottom_up_calc(graph)
+    values = nx.get_node_attributes(graph, 'value')
+    return int(values[root])
+
+
+def p2(graph: nx.DiGraph) -> int:
+    bottom_up_calc(graph, root)
+    values = nx.get_node_attributes(graph, 'value')
+    n1, n2 = nx.neighbors(graph, root)
+    n1_subtree = nx.dfs_tree(graph, n1)
+    if humn in n1_subtree:
+        candidate_root = n1
+        target_value = values[n2]
+        subtree = nx.subgraph(graph, n1_subtree)
+    else:
+        candidate_root = n2
+        target_value = values[n1]
+        subtree = nx.subgraph(graph, nx.dfs_tree(graph, candidate_root))
+
+    if __debug__:
+        print('to match: {} we have to rebalance {}'.format(target_value, subtree.nodes()))
+
+    # find upper and lower boundaries
+    low_diff = compare(candidate_root, 1, subtree, target_value)  # what if we should find a negative value?
+    low_sign = low_diff / abs(low_diff)
+    left_boundary = None
+    right_boundary = 2
+    # find upper and lower boundaries
+    while True:
+        test = compare(candidate_root, right_boundary, subtree, target_value)
+        cur_sign = test / abs(test)
+        if __debug__:
+            print(right_boundary, '->', test)
+        if low_sign != cur_sign:
+            break  # overshot
+        left_boundary = right_boundary
+        right_boundary *= 2
+    if __debug__:
+        print('the answer must be between', left_boundary, 'and', right_boundary)
+
+    # if low_sign > 0, invert search direction
+    # binary search
+    while left_boundary <= right_boundary:
+        if __debug__:
+            print('searching between', left_boundary, 'and', right_boundary)
+        middle = (left_boundary + right_boundary) // 2
+        test = compare(candidate_root, middle, subtree, target_value)
+        if __debug__:
+            print('testing', middle, '->', test)
+        # again, too late and too lazy to optimize this:
+        if test < 0:
+            if low_sign < 0:
+                left_boundary = middle + 1
+            else:
+                right_boundary = middle - 1
+        elif test > 0:
+            if low_sign < 0:
+                right_boundary = middle - 1
+            else:
+                left_boundary = middle + 1
+        else:
+            return middle
+
+    return -1  # fail
+
+
+def compare(source, candidate_value, graph, target_value):
+    if __debug__:
+        print('Testing candidate value', candidate_value)
+    values = nx.get_node_attributes(graph, 'value')
+    values[humn] = candidate_value
+    nx.set_node_attributes(graph, values, 'value')
+    bottom_up_calc(graph, source)
+    test = nx.get_node_attributes(graph, 'value')[source]
+    return test - target_value
+
+
+"""
+def p2_reverse_attempt_failed_for_real_data(graph: nx.DiGraph) -> Decimal:
+    # works for test but does not work for real data
+    bottom_up_calc(graph)
+    n1, n2 = nx.neighbors(graph, root)
+    values = nx.get_node_attributes(graph, 'value')
+    operations = nx.get_node_attributes(graph, 'operation')
+
+    # which subtree has the target value
+    n1_subtree = nx.dfs_tree(graph, n1)
+    if humn in n1_subtree:
+        target_value = values[n2]
+    else:
+        target_value = values[n1]
+    if __debug__:
+        print('Target value is:', target_value)
+
+    # traverse to humn from root calculating its value with inverse functions
+    path_to_humn = list(nx.dijkstra_path(graph, root, humn))
+    for i, current in enumerate(path_to_humn[1:-1], start=1):
+        next_hop = path_to_humn[i + 1]
+        n1, n2 = nx.neighbors(graph, current)
+        second_operand = values[n1] if n1 != next_hop else values[n2]
+        # otv = int(target_value)
+        otv = target_value
+        direct_op = operations[current]
+        inverse_op = inverse_funcs[direct_op]
+        target_value = funcs[inverse_op](otv, second_operand)
+        print('exploring {}, old target: {}, second_operand {}, operation {}, inverse {}, new target value {},'
+              .format(current, otv, second_operand, direct_op, inverse_op, target_value))
+
+    return target_value
+"""
+
+
+def bottom_up_calc(graph: nx.DiGraph, from_node=root):
+    wt = reversed([node for node in nx.bfs_tree(graph, from_node) if graph.out_degree(node) > 0])
     values = nx.get_node_attributes(graph, 'value')
     operations = nx.get_node_attributes(graph, 'operation')
     for current in wt:
         neighbors = list(nx.neighbors(graph, current))
+        v1 = values[neighbors[0]]
+        v2 = values[neighbors[1]]
         if __debug__:
-            print('Exploring junction {}, neighbors: {}, operation: {}'.format(current, neighbors, operations[current]))
-        op_result = funcs[operations[current]](values[neighbors[0]], values[neighbors[1]])
+            print('Exploring junction {}, neighbors: {}, {} {} {}'
+                  .format(current, neighbors, v1, operations[current], v2))
+        op_result = funcs[operations[current]](v1, v2)
         values[current] = op_result
         if __debug__:
             print('op produced:', op_result)
-
-    return int(values['root'])
-
-
-def p2(gpaph: nx.DiGraph) -> int:
-    return -1
+    nx.set_node_attributes(graph, values, 'value')
 
 
-def parse_input(input_lines: list[str]) -> nx.DiGraph:
+def parse_input(input_lines: List[str]) -> nx.DiGraph:
     parsed = nx.DiGraph()
     for line in input_lines:
         lp, rp = line.split(': ')
@@ -53,7 +178,7 @@ if __name__ == "__main__":
     data_input = read_file("in.txt")
     result1 = p1(parse_input(data_input))
     print("result1: {}".format(result1))
-    result2 = p2(data_input)
+    result2 = p2(parse_input(data_input))
     print("result2: {}".format(result2))
 
 u"""

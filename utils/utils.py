@@ -1,5 +1,6 @@
 import logging
 import sys
+from typing import List
 
 for handler in logging.root.handlers[:]:
     logging.root.removeHandler(handler)
@@ -10,7 +11,7 @@ def dlog(obj: str, *args):
     logging.debug(obj, *args)
 
 
-def read_file(filepath) -> list[str]:
+def read_file(filepath) -> List[str]:
     data = []
     with open(filepath, 'r') as f:
         for line in f:
